@@ -97,32 +97,98 @@ def create_products():
 ######################################################################
 # L I S T   A L L   P R O D U C T S
 ######################################################################
-
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
-
-######################################################################
-# R E A D   A   P R O D U C T
-######################################################################
-
-#
-# PLACE YOUR CODE HERE TO READ A PRODUCT
-#
-
-######################################################################
-# U P D A T E   A   P R O D U C T
-######################################################################
-
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
-
-######################################################################
-# D E L E T E   A   P R O D U C T
-######################################################################
+@app.route("/products", methods=["GET"])
+def get_products():
+    """
+    Lists all products
+    This endpoint will return a list of all products.
+    """
+    products = []  # Placeholder for listing all products
+    return jsonify(products)
 
 
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#
+@app.route("/products/<int:product_id>", methods=["GET"])
+def get_product(product_id):
+    """
+    Retrieves a specific product by ID
+    This endpoint will return the details of a product based on its ID.
+    """
+
+    product = Product.query.get(product_id)
+    if product is None:
+        abort(status.HTTP_404_NOT_FOUND)
+    return jsonify(product.serialize())
+
+## UPDATE
+```python
+@app.route("/products/<int:product_id>", methods=["PUT"])
+def update_product(product_id):
+    """
+    Updates a specific product by ID
+    This endpoint will update the details of a product based on its ID.
+    """
+
+    check_content_type("application/json")
+    data = request.get_json()
+
+    product = Product.query.get(product_id)
+    if product is None:
+        abort(status.HTTP_404_NOT_FOUND)
+
+    product.deserialize(data)
+    product.update()
+
+    return jsonify(product.serialize())
+
+
+
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_product(product_id):
+    """
+    Deletes a specific product by ID
+    This endpoint will delete a product based on its ID.
+    """
+
+    product = Product.query.get(product_id)
+    if product is None:
+        abort(status.HTTP_404_NOT_FOUND)
+
+    product.delete()
+
+    return jsonify(status="Product deleted")
+@app.route("/products", methods=["GET"])
+def get_products():
+    """
+    Lists all products
+    This endpoint will return a list of all products.
+    """
+
+    products = Product.query.all()
+    return jsonify([product.serialize() for product in products])
+@app.route("/products/name/<string:name>", methods=["GET"])
+def get_products_by_name(name):
+    """
+    Lists all products by name
+    This endpoint will return a list of all products that match the given name.
+    """
+
+    products = Product.query.filter_by(name=name).all()
+    return jsonify([product.serialize() for product in products])
+@app.route("/products/category/<string:category>", methods=["GET"])
+def get_products_by_category(category):
+    """
+    Lists all products by category
+    This endpoint will return a list of all products that match the given category.
+    """
+
+    products = Product.query.filter_by(category=category).all()
+    return jsonify([product.serialize() for product in products])
+@app.route("/products/availability/<bool:availability>", methods=["GET"])
+def get_products_by_availability(availability):
+    """
+    Lists all products by availability
+    This endpoint will return a list of all products that match the given availability.
+    """
+
+    products = Product.query.filter_by(available=availability).all()
+    return jsonify([product.serialize() for product in products])
