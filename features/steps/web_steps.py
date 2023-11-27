@@ -96,22 +96,31 @@ def step_impl(context, element_name):
     element.clear()
     element.send_keys(context.clipboard)
 
-##################################################################
-# This code works because of the following naming convention:
-# The buttons have an id in the html hat is the button text
-# in lowercase followed by '-btn' so the Clean button has an id of
-# id='clear-btn'. That allows us to lowercase the name and add '-btn'
-# to get the element id of any button
-##################################################################
+@when('I click the "{button_name}" button')
+def step_impl(context, button_name):
+    button_id = button_name.lower() + '-btn'
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located((By.ID, button_id))
+    )
+    element.click()
+@then('I should see "{text_string}"')
+def step_impl(context, text_string):
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located((By.CSS_SELECTOR, f'*{text_string}*'))
+    )
+    assert(element is not None)
+@then('I should not see "{text_string}"')
+def step_impl(context, text_string):
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located((By.CSS_SELECTOR, f'*{text_string}*'))
+    )
+    assert(element is None)
+@then('I should see the following message:')
+def step_impl(context):
+    expected_message = context.text
+    actual_message = context.driver.find_element(By.TAG_NAME, 'body').text
+    assert(expected_message in actual_message)
 
-## UPDATE CODE HERE ##
-
-##################################################################
-# This code works because of the following naming convention:
-# The id field for text input in the html is the element name
-# prefixed by ID_PREFIX so the Name field has an id='pet_name'
-# We can then lowercase the name and prefix with pet_ to get the id
-##################################################################
 
 @then('I should see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
