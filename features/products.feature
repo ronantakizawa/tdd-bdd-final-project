@@ -38,3 +38,51 @@ Scenario: Create a Product
     And I should see "True" in the "Available" dropdown
     And I should see "Tools" in the "Category" dropdown
     And I should see "34.95" in the "Price" field
+
+Scenario: Delete a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see "Success"
+    And I should see "Hat" in the "Name" field
+    And I copy the "Id" field
+    And I press the "Clear" button
+    When I paste the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Product has been Deleted!"
+
+  Scenario: List All Products
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    When I press the "Search" button
+    Then I should see "Success"
+    And I should see "Hat" in the results
+    And I should see "Shoes" in the results
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
+    
+    Scenario: Search by Category
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select the "Food" category
+    And I press the "Search" button
+    Then I should see "Success"
+    And I should see "Big Mac" in the results
+
+Scenario: Search by Availability
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "True" in the "Available" dropdown
+    And I press the "Search" button
+    Then I should see "Success"
+    And I should see "Hat" in the results
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
+
+Scenario: Search by Name
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see "Success"
+    And I should see "Hat" in the results
